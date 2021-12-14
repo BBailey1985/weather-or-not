@@ -31,8 +31,7 @@
       
       <div class="col-9">
         <div class="row">
-          <div class="col-12 border border-dark">
-            <div class="card" id="current-weather">
+            <div class="card d-none" id="current-weather">
               <div class="card-body">
                 <h3 id="city-name" class="city-name"></h3>
                 <img id="weather-pic" alt="">
@@ -46,10 +45,17 @@
         </div>
       </div>
 
-      <div class="row" id=five-day>
+      <div class="row d-none" id=five-day>
         <div class="col-12">
           <h3>5-Day Forecast</h3>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-2 bg-primary bg-gradient text-white outlook"></div>
+        <div class="col-2 bg-primary bg-gradient text-white outlook"></div>
+        <div class="col-2 bg-primary bg-gradient text-white outlook"></div>
+        <div class="col-2 bg-primary bg-gradient text-white outlook"></div>
+        <div class="col-2 bg-primary bg-gradient text-white outlook"></div>
       </div>
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
