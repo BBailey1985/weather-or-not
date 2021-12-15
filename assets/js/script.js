@@ -23,12 +23,13 @@ var getWeather = function(cityName) {
   fetch(apiUrl).then(function(response) {
     response.json().then(function(data) {
       currentWeatherEl.classList.remove("d-none");
-      console.log(data);
+      // console.log(data);
       //current weather 
       var currentDay = moment().format("L"); 
       cityNameEl.textContent = data.name + " (" + currentDay + ")";
       var weatherPic = data.weather[0].icon;
-      weatherPicEl.setAttribute("src", "http://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
+      weatherPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
+      weatherPicEl.setAttribute("alt", data.weather[0].description);
       tempEl.textContent = "Temp: " + data.main.temp + " °F";
       windEl.textContent = "Wind: " + data.wind.speed + " MPH";
       humidityEl.textContent = "Humidity: " + data.main.humidity + " %";
@@ -41,7 +42,7 @@ var getWeather = function(cityName) {
       //fetch new API for UV Index and then display data
       fetch(uvApiUrl).then(function(response) {
         response.json().then(function(data) {
-        console.log(data);
+        // console.log(data);
         var uvIndexSpan = document.createElement("span");
 
         //adds colors to UV index and append
@@ -76,30 +77,40 @@ var getWeather = function(cityName) {
             outlookSpan.setAttribute("class", "mt-3 mb-0");
             outlookSpan.textContent = plusOneDay;
             outlookEl[i].append(outlookSpan);
-          }
 
+            //icons for forecasts
+            var forecastIconEl = document.createElement("img");
+            var forecastIndex= i * 8;
+            var forecastPic = data.list[forecastIndex].weather[0].icon;
+            forecastIconEl.setAttribute("src", "https://openweathermap.org/img/wn/" + forecastPic + "@2x.png");
+            forecastIconEl.setAttribute("alt", data.list[forecastIndex].weather[0].description);
+            outlookEl[i].append(forecastIconEl);
 
-
+            //rest of the forecast data
+            var forecastTemp = document.createElement("p");
+            var forecastWind = document.createElement("p");
+            var forecastHumidity = document.createElement("p");
+            forecastTemp.textContent= "Temp: " + data.list[forecastIndex].main.temp + " °F";
+            forecastWind.textContent= "Wind: " + data.list[forecastIndex].wind.speed + " MPH";
+            forecastHumidity.textContent= "Humidity: " + data.list[forecastIndex].main.humidity + " %";
+            outlookEl[i].append(forecastTemp);
+            outlookEl[i].append(forecastWind);
+            outlookEl[i].append(forecastHumidity);
+          };
         });
-
       });
-
-
-
-
-
-
     });
   });
-
 }
 
-
-
-
+//
 
 searchButtonEl.addEventListener("click", function () {
   var selectedCity = searchCityNameEl.value;
   getWeather(selectedCity);
   searchCityNameEl.value ="";
+  localStorage.setItem("history", JSON.stringify(searchHistory));
 });
+
+//save search history into an array
+
