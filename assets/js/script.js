@@ -1,6 +1,7 @@
 //variables
 var userFormEl = document.querySelector("#user-form");
 var searchButtonEl = document.querySelector("#search-button");
+var historyEl = document.querySelector("#history");
 var searchCityNameEl = document.querySelector("#search-city-name");
 var currentWeatherEl = document.querySelector("#current-weather");
 var cityNameEl = document.querySelector("#city-name");
@@ -10,10 +11,10 @@ var windEl = document.querySelector("#wind");
 var humidityEl = document.querySelector("#humidity");
 var uvIndex = document.querySelector("#uv-index");
 var fiveDayEl = document.querySelector("#five-day");
+var searchHistory = [];
 
 // API key to pull in data
 var apiKey = "1c06fdea9753395ddbde291bde578a40";
-
 
 //function to get weather
 var getWeather = function(cityName) {
@@ -23,7 +24,7 @@ var getWeather = function(cityName) {
   fetch(apiUrl).then(function(response) {
     response.json().then(function(data) {
       currentWeatherEl.classList.remove("d-none");
-      // console.log(data);
+      console.log(data);
       //current weather 
       var currentDay = moment().format("L"); 
       cityNameEl.textContent = data.name + " (" + currentDay + ")";
@@ -42,7 +43,6 @@ var getWeather = function(cityName) {
       //fetch new API for UV Index and then display data
       fetch(uvApiUrl).then(function(response) {
         response.json().then(function(data) {
-        // console.log(data);
         var uvIndexSpan = document.createElement("span");
 
         //adds colors to UV index and append
@@ -102,15 +102,29 @@ var getWeather = function(cityName) {
     });
   });
 }
-
-//
-
+//search button
 searchButtonEl.addEventListener("click", function () {
   var selectedCity = searchCityNameEl.value;
   getWeather(selectedCity);
-  searchCityNameEl.value ="";
-  localStorage.setItem("history", JSON.stringify(searchHistory));
+  searchHistory.push(selectedCity);
+  selectedCity.value ="";
+  localStorage.setItem("city", JSON.stringify(searchHistory));
+  getSearchHistory();
 });
 
 //save search history into an array
+var getSearchHistory = function() {
+  historyEl.textContent="";
+  JSON.parse(window.localStorage.getItem("city"));
+  for (var i = 0; i < searchHistory.length; i++);
+  var historyItem = document.createElement("input");
+  historyItem.setAttribute("type", "button");
+  historyItem.setAttribute("class", "form-control d-block btn btn-light border mt-3");
+  historyItem.setAttribute("value", searchHistory[i]);
+  
+  historyItem.addEventListener("click", function() {
+    getWeather(historyItem.value);
+  });
+  historyEl.append(historyItem);
 
+}
