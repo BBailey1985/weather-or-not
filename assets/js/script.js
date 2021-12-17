@@ -11,7 +11,6 @@ var windEl = document.querySelector("#wind");
 var humidityEl = document.querySelector("#humidity");
 var uvIndex = document.querySelector("#uv-index");
 var fiveDayEl = document.querySelector("#five-day");
-var searchHistory = [];
 
 // API key to pull in data
 var apiKey = "1c06fdea9753395ddbde291bde578a40";
@@ -24,7 +23,7 @@ var getWeather = function(cityName) {
   fetch(apiUrl).then(function(response) {
     response.json().then(function(data) {
       currentWeatherEl.classList.remove("d-none");
-      console.log(data);
+      console.log(data.name);
       //current weather 
       var currentDay = moment().format("L"); 
       cityNameEl.textContent = data.name + " (" + currentDay + ")";
@@ -71,7 +70,7 @@ var getWeather = function(cityName) {
 
           //loop to add forecasts
           for (i = 0; i < outlookEl.length; i++) {
-            outlookEl.textContent = "";
+            outlookEl[i].textContent = "";
             var plusOneDay = moment().add(i, "days").format("MM-DD-YYYY");
             var outlookSpan = document.createElement("p");
             outlookSpan.setAttribute("class", "mt-3 mb-0");
@@ -106,25 +105,26 @@ var getWeather = function(cityName) {
 searchButtonEl.addEventListener("click", function () {
   var selectedCity = searchCityNameEl.value;
   getWeather(selectedCity);
-  searchHistory.push(selectedCity);
-  selectedCity.value ="";
-  localStorage.setItem("city", JSON.stringify(searchHistory));
+  var history = JSON.parse(window.localStorage.getItem("city")) || [];
+  history.push(selectedCity);
+  localStorage.setItem("city", JSON.stringify(history));
   getSearchHistory();
 });
 
 //save search history into an array
 var getSearchHistory = function() {
   historyEl.textContent="";
-  JSON.parse(window.localStorage.getItem("city"));
-  for (var i = 0; i < searchHistory.length; i++);
+  var history = JSON.parse(window.localStorage.getItem("city"));
+  for (var i = 0; i < history.length; i++) {
   var historyItem = document.createElement("input");
   historyItem.setAttribute("type", "button");
   historyItem.setAttribute("class", "form-control d-block btn btn-light border mt-3");
-  historyItem.setAttribute("value", searchHistory[i]);
-  
+  historyItem.setAttribute("value", history[i]);
   historyItem.addEventListener("click", function() {
     getWeather(historyItem.value);
-  });
+  })
   historyEl.append(historyItem);
-
+  }
 }
+getSearchHistory();
+
