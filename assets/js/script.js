@@ -17,6 +17,7 @@ var apiKey = "1c06fdea9753395ddbde291bde578a40";
 
 //function to get weather
 var getWeather = function(cityName) {
+  console.log("city name value :",cityName)
   var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=imperial&appid=" + apiKey;
 
   //fetch the API and then display data
@@ -31,8 +32,8 @@ var getWeather = function(cityName) {
       weatherPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
       weatherPicEl.setAttribute("alt", data.weather[0].description);
       tempEl.textContent = "Temp: " + data.main.temp + " °F";
-      windEl.textContent = "Wind: " + data.wind.speed + " MPH";
       humidityEl.textContent = "Humidity: " + data.main.humidity + " %";
+      windEl.textContent = "Wind: " + data.wind.speed + " MPH";
     
       // get UV Index 
       var stationLat = data.coord.lat;
@@ -101,7 +102,7 @@ var getWeather = function(cityName) {
     });
   });
 }
-//search button
+//search button and makes an array if not one already made
 searchButtonEl.addEventListener("click", function () {
   var selectedCity = searchCityNameEl.value;
   getWeather(selectedCity);
@@ -111,7 +112,7 @@ searchButtonEl.addEventListener("click", function () {
   getSearchHistory();
 });
 
-//save search history into an array
+//get search history and make buttons
 var getSearchHistory = function() {
   historyEl.textContent="";
   var history = JSON.parse(window.localStorage.getItem("city"));
@@ -120,11 +121,13 @@ var getSearchHistory = function() {
   historyItem.setAttribute("type", "button");
   historyItem.setAttribute("class", "form-control d-block btn btn-light border mt-3");
   historyItem.setAttribute("value", history[i]);
-  historyItem.addEventListener("click", function() {
-    getWeather(historyItem.value);
-  })
   historyEl.append(historyItem);
   }
 }
+//recalls search history weather
+historyEl.addEventListener("click", function(event) {
+  getWeather(event.target.value);
+});
+
 getSearchHistory();
 
